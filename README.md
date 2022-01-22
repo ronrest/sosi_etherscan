@@ -1,4 +1,6 @@
-# My-Repo
+# SOSI Etherscan
+
+Python SDK wrapper for the Etherscan.io REST API.
 
 - [Installing](docs/installing.md)
 - [Setup](docs/setup.md)
