@@ -26,7 +26,7 @@ setuptools.setup(
         'python-dateutil',
         'python-decouple',
         'requests',
-        'sosi_api @ git+ssh://git@github.com/ronrest/sosi_api.git@v0.0.1',
+        'sosi-api==0.0.*',
     ],
     extras_require={
         'dev': [

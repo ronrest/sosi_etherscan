@@ -24,7 +24,7 @@ requests==2.26.0
     #   sosi-etherscan (setup.py)
 six==1.16.0
     # via python-dateutil
-sosi-api @ git+ssh://git@github.com/ronrest/sosi_api.git@v0.0.1
+sosi-api==0.0.1
     # via sosi-etherscan (setup.py)
 urllib3==1.26.7
     # via requests
