@@ -18,7 +18,16 @@ client = EtherscanClient()
 ## Basic usage
 
 
-```
+```python
 wallet_address = "XXX"
-transactions = client.address_transactions(wallet_address)
+
+# Get regular transactions
+transactions = client.transactions(wallet_address)
+
+# Get ERC-20 transactions
+erc20_transactions = client.erc20_transactions(wallet_address)
+
+# Get ERC-20 transactions, filtering for a specific token
+token_contract_address="ZZZ"
+erc20_transactions = client.erc20_transactions(wallet_address, token_address=token_contract_address)
 ```

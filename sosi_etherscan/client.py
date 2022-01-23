@@ -35,9 +35,26 @@ class EtherscanClient(BaseClient):
         self.api_key = key if key is not None else env('ETHERSCAN_API_KEY', cast=str)
         assert self.api_key is not None, "Missing ETHERSCAN_API_KEY"
 
-    def address_transactions(self, address):
-        """
-        Note: This API endpoint returns a maximum of 10,000 records only.
+    def _process_list_response(self, response, limit=10000):
+        # status =  response.get("status")  # eg 1
+        # status_message = response.get("message") # eg "OK"
+        items = response.get("result", [])
+        n_received = len(items)
+        if n_received > limit:
+            print(f"WARNING: the results might have been clipped. Max limit for"
+                  f"transactions endpoint is {limit}, received {n_received}.")
+
+        # Create a datetime string field called `time`
+        for item in items:
+            item["time"] = dtutils.timestamp_to_datetime_str(item["timeStamp"], tz="UTC", unit="s")
+
+        return items
+
+    def transactions(self, address):
+        """Get normal transactions for a given address.
+        
+        Notes: 
+            This API endpoint returns a maximum of 10,000 records only.
         """
         # TODO: to pagination to handle addresses with lots of transactions
         endpoint = "/api"
@@ -55,16 +72,37 @@ class EtherscanClient(BaseClient):
             apikey=self.api_key,
         )
         response = self.request(url=url, params=params, kind="get")
-        # status =  response.get("status")  # eg 1
-        # status_message = response.get("message") # eg "OK"
-        items = response.get("result", [])
-        n_received = len(items)
-        if n_received > limit:
-            print(f"WARNING: the results might have been clipped. Max limit for"
-                  f"transactions endpoint is {limit}, received {n_received}.")
+        items = self._process_list_response(response, limit=limit)
+        return items
 
-        # Create a datetime string field called `time`
-        for item in items:
-            item["time"] = dtutils.timestamp_to_datetime_str(item["timeStamp"], tz="UTC", unit="s")
+    def erc20_transactions(self, address, token_address=None):
+        """Get list of ERC20 token transactions for an address. Optionally filter 
+        for only certain tokens by providing the token contract address.
 
+        Notes: 
+            It is not clear what the limit for this endpoint is. Assuming it is 
+            same as other endpoints, of 10,000 records.
+        """
+        # TODO: pagination
+        endpoint = "/api"
+        url = self.base_url + endpoint
+        limit = 10000   # WARNING: it is not clear what the default limit is for
+                        # this endpoint. Naively assuming it is same as normal 
+                        # transactions endpoint.
+        params = dict(
+            module="account",
+            action="tokentx",
+            address=address,  # from an address. Does it also show the ones to this address?
+            sort="asc",
+            startblock=0,
+            # endblock=99999999,
+            page=1,
+            offset=0,
+            apikey=self.api_key,
+        )
+        if token_address is not None:
+            params["contractAddres"] = token_address
+
+        response = self.request(url=url, params=params, kind="get")
+        items = self._process_list_response(response, limit=limit)
         return items
