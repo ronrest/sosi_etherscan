@@ -96,8 +96,6 @@ class EtherscanClient(BaseClient):
             offset=0,
             apikey=self.api_key,
         )
-        if token_address is not None:
-            params["contractAddres"] = token_address
 
         response = self.request(url=url, params=params, kind="get")
         items = self._process_list_response(response, limit=limit)
