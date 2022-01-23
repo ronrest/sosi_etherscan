@@ -24,10 +24,20 @@ wallet_address = "XXX"
 # Get regular transactions
 transactions = client.transactions(wallet_address)
 
+# Get list of internal transactions
+internal_transactions = client.internal_transactions(wallet_address)
+
 # Get ERC-20 transactions
 erc20_transactions = client.erc20_transactions(wallet_address)
 
 # Get ERC-20 transactions, filtering for a specific token
 token_contract_address="ZZZ"
 erc20_transactions = client.erc20_transactions(wallet_address, token_address=token_contract_address)
+
+
+# Get ERC-721 transactions
+erc721_transactions = client.erc721_transactions(wallet_address)
+
+token_contract_address="ZZZ"
+erc721_transactions = client.erc721_transactions(wallet_address, token_address=token_contract_address)
 ```

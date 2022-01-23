@@ -75,6 +75,34 @@ class EtherscanClient(BaseClient):
         items = self._process_list_response(response, limit=limit)
         return items
 
+    def internal_transactions(self, address):
+        """Get list of internal transactions for an address.
+
+        Notes: 
+            This API endpoint returns a maximum of 10,000 records only.
+        """
+        # TODO: pagination
+        endpoint = "/api"
+        url = self.base_url + endpoint
+        limit = 10000
+        params = dict(
+            module="account",
+            action="txlistinternal",
+            address=address,  # from an address. Does it also show the ones to this address?
+            sort="asc",
+            startblock=0,
+            # endblock=99999999,
+            page=1,
+            offset=0,
+            apikey=self.api_key,
+        )
+        if token_address is not None:
+            params["contractAddres"] = token_address
+
+        response = self.request(url=url, params=params, kind="get")
+        items = self._process_list_response(response, limit=limit)
+        return items
+
     def erc20_transactions(self, address, token_address=None):
         """Get list of ERC20 token transactions for an address. Optionally filter 
         for only certain tokens by providing the token contract address.
