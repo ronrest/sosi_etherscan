@@ -106,3 +106,35 @@ class EtherscanClient(BaseClient):
         response = self.request(url=url, params=params, kind="get")
         items = self._process_list_response(response, limit=limit)
         return items
+
+    def erc721_transactions(self, address, token_address=None):
+        """Get list of ERC721 (NFT) token transactions for an address. Optionally
+        filter for only certain tokens by providing the token contract address.
+
+        Notes: 
+            It is not clear what the limit for this endpoint is. Assuming it is 
+            same as other endpoints, of 10,000 records.
+        """
+        # TODO: pagination
+        endpoint = "/api"
+        url = self.base_url + endpoint
+        limit = 10000   # WARNING: it is not clear what the default limit is for
+                        # this endpoint. Naively assuming it is same as normal 
+                        # transactions endpoint.
+        params = dict(
+            module="account",
+            action="tokennfttx",
+            address=address,  # from an address. Does it also show the ones to this address?
+            sort="asc",
+            startblock=0,
+            # endblock=99999999,
+            page=1,
+            offset=0,
+            apikey=self.api_key,
+        )
+        if token_address is not None:
+            params["contractAddres"] = token_address
+
+        response = self.request(url=url, params=params, kind="get")
+        items = self._process_list_response(response, limit=limit)
+        return items
