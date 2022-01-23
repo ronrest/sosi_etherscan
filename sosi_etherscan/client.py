@@ -57,14 +57,14 @@ class EtherscanClient(BaseClient):
         response = self.request(url=url, params=params, kind="get")
         # status =  response.get("status")  # eg 1
         # status_message = response.get("message") # eg "OK"
-        transactions = response.get("result")
-        n_received = len(transactions)
+        items = response.get("result", [])
+        n_received = len(items)
         if n_received > limit:
             print(f"WARNING: the results might have been clipped. Max limit for"
                   f"transactions endpoint is {limit}, received {n_received}.")
 
         # Create a datetime string field called `time`
-        for item in transactions:
+        for item in items:
             item["time"] = dtutils.timestamp_to_datetime_str(item["timeStamp"], tz="UTC", unit="s")
 
-        return transactions
+        return items
