@@ -32,8 +32,8 @@ class EtherscanClient(BaseClient):
             max_requests_per_min=5*60,
             response_kind="json",
         )
-        self.api_key = key if key is not None else env('ETHERSCAN_API_KEY', cast=str)
-        assert self.api_key is not None, "Missing ETHERSCAN_API_KEY"
+        self.api_key = key if key is not None else env('ETHERSCAN_API_KEY', cast=str, default=None)
+        assert self.api_key != "None", "Missing ETHERSCAN_API_KEY"
 
     def _process_list_response(self, response, limit=10000):
         # status =  response.get("status")  # eg 1
