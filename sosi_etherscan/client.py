@@ -50,6 +50,21 @@ class EtherscanClient(BaseClient):
 
         return items
 
+    def transaction(self, hash):
+        """Get information for a transaction given its transaction hash id"""
+        endpoint = "/api"
+        url = self.base_url + endpoint
+        params = dict(
+            module="proxy",
+            action="eth_getTransactionByHash",
+            txhash=hash,
+            apikey=self.api_key,
+        )
+        response = self.request(url=url, params=params, kind="get")
+        # id =  response.get("id")  # eg 1
+        item = response.get("result", {})
+        return item
+
     def transactions(self, address):
         """Get normal transactions for a given address.
         
